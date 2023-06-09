@@ -65,9 +65,10 @@ fi
 # Execute
 #
 if [ $new == "true" ] || [ -z $(get_last_container_id) ] ; then
-	docker run $rm -d -p 8080:8080 \
+	docker run $rm -d -p 8787:8787 \
+                          -p 8080:8080 \
 		          -p 9990:9990 \
-                          -p 8443:8443 $(get_image_name)
+                          -p 8443:8443 $(get_image_name) 
 else 
 	if [[ $rm ]]; then echo Remove option ignored; fi
 	echo Reusing $(get_last_container_id) for $(get_image_name); 
