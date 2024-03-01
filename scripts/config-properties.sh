@@ -11,6 +11,14 @@ fi
 # Main configuration property file
 CF=config.properties
 
+PROPERTY_FILE=$WD/$CF
+
+# If the property file does not exist, override its location to the one which
+# exists in the containers folder
+if [[ ! -f $PROPERTY_FILE ]]; then
+        PROPERTY_FILE=$BOXCAR_PROJECT_HOME/containers/$CF
+fi
+
 # Allows the caller to switch the property file from one to another.  Usefule 
 # because we have global properties and environment specific properties.
 #
@@ -18,8 +26,10 @@ set_property_file() {
 	CF=$1
 
 	if [ ! -f $WD/$CF ]; then
-        	echo Cannot find $WD/$CF
+        	echo Cannot find $PROPERTY_FILE
         	exit 1;
+	else
+        	PROPERTY_FILE=$WD/$CF
 	fi
 }
 
@@ -37,7 +47,7 @@ get_property_value() {
 	if [[ ${properties[$1]} ]]; then
 		echo ${properties[$1]}
 	else 
-        	value=`grep $1 $WD/$CF`
+        	value=`grep $1 $PROPERTY_FILE`
         	echo ${value##*=}
 	fi
 }
@@ -56,8 +66,8 @@ set_property_value() {
 
 require_property_file() {
 
-	if [[ ! -f $WD/$CF ]]; then
-		echo Could not find $WD/$CF
+	if [[ ! -f $PROPERTY_FILE ]]; then
+		echo Could not find $PROPERTY_FILE
 		exit 1
 	fi
 
