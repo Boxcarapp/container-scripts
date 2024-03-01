@@ -26,7 +26,7 @@ set_property_file() {
 	CF=$1
 
 	if [ ! -f $WD/$CF ]; then
-        	echo Cannot find $PROPERTY_FILE
+        	echo Cannot find $WD/$CF
         	exit 1;
 	else
         	PROPERTY_FILE=$WD/$CF
