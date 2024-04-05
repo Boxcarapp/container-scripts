@@ -33,8 +33,13 @@ if [ ! -f $CUSTOMIZATION_LOCK_FILE ]; then
 
 	cwd=`dirname "$0"`
 
-	echo "=> Executing customization script"
+	echo "=> Executing customization commands"
 	$JBOSS_CLI -c --properties=$cwd/env.properties --file=$cwd/commands.cli
+
+	if [ -f "$cwd/env-commands.cli" ]; then
+	echo "=> Executing environment-specific commands"
+		$JBOSS_CLI -c --properties=$cwd/env.properties --file=$cwd/env-commands.cli
+	fi
 
 	touch $CUSTOMIZATION_LOCK_FILE
 
