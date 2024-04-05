@@ -1,4 +1,4 @@
-#!/usr/local/bin/bash
+#!/usr/local/bin/bash -e
 
 if [ "x$CONTAINER_SCRIPT_HOME" == "x" ]; then
         echo "Please set CONTAINER_SCRIPT_HOME"
@@ -22,7 +22,7 @@ cp $buildDir/env.properties $WD/customization
 cp $CONTAINER_SCRIPT_HOME/wildfly/execute.sh $WD/customization
 
 # Build
-docker build -t $imageName -f $buildDir/Dockerfile $WD
+docker build --no-cache -t $imageName -f $buildDir/Dockerfile $WD
 
 # Clean up after the build
 rm $WD/customization/env.properties

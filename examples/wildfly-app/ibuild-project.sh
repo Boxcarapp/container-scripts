@@ -1,4 +1,4 @@
-#!/usr/local/bin/bash
+#!/usr/local/bin/bash -e
 
 if [ "x$CONTAINER_SCRIPT_HOME" == "x" ]; then
         echo "Please set CONTAINER_SCRIPT_HOME"
