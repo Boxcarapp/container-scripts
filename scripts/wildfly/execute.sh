@@ -12,6 +12,13 @@ JBOSS_CONFIG=${2:-"$JBOSS_MODE.xml"}
 
 CUSTOMIZATION_LOCK_FILE=`dirname "$0"`/customization.lock
 
+# Set transaction node identifier to a random 23 character value to avoid a warning during server startup
+if [[ "standalone" == "${JBOSS_MODE}" ]] && [[ -f "${JBOSS_HOME}/standalone/configuration/standalone-full.xml" ]]; then
+  TX_NODE_IDENTIFIER=$(uuid | sed 's/-//g' | awk '{print substr($1, 0, 23)}')
+  JBOSS_CFG_FILE="${JBOSS_HOME}/standalone/configuration/standalone-full.xml"
+  sed -i "s/node-identifier=\"\${jboss.tx.node.id:1}\"/node-identifier=\"${TX_NODE_IDENTIFIER}\"/g" ${JBOSS_CFG_FILE}
+fi
+
 function wait_for_server() {
   until `$JBOSS_CLI -c ":read-attribute(name=server-state)" 2> /dev/null | grep -q running`; do
     sleep 1
@@ -37,7 +44,7 @@ if [ ! -f $CUSTOMIZATION_LOCK_FILE ]; then
 	$JBOSS_CLI -c --properties=$cwd/env.properties --file=$cwd/commands.cli
 
 	if [ -f "$cwd/env-commands.cli" ]; then
-	echo "=> Executing environment-specific commands"
+    echo "=> Executing environment-specific commands"
 		$JBOSS_CLI -c --properties=$cwd/env.properties --file=$cwd/env-commands.cli
 	fi
 
