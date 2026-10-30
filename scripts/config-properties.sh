@@ -47,8 +47,15 @@ get_property_value() {
 	if [[ ${properties[$1]} ]]; then
 		echo ${properties[$1]}
 	else 
-        	value=`grep $1 $PROPERTY_FILE`
-        	echo ${value##*=}
+        	# Anchored so a property name mentioned inside a comment cannot match.  An unanchored
+        	# grep matched every line containing the name as a substring, so 'repo' also picked up
+        	# the word 'reported' in a comment and returned both lines as one value.  Last match
+        	# wins when a file defines the same property twice.
+        	value=`grep "^$1=" "$PROPERTY_FILE" | tail -n 1`
+
+        	# Shortest prefix, so only the first '=' separates name from value.  Values carry their
+        	# own '=' -- query strings on the JDBC and broker URLs are full of them.
+        	echo "${value#*=}"
 	fi
 }
 
